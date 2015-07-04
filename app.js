@@ -1,21 +1,6 @@
 var config = require('config.json')('./sample.json');
 var login = require("facebook-chat-api");
-var request = require("request");//.defaults({ encoding: null });
-
-
-// var res = 'cat bomb 2'.match(/cat bomb (\d*)/i);
-// if (res) {
-//   for (var i = 0; i < res[1]; i++) {
-//     request({
-//       url: 'http://edgecats.net/random',
-//       json: true
-//     }, function (error, response, body) {
-//       if (!error && response.statusCode === 200) {
-//         console.log(body);
-//       }
-//     });
-//   };
-// };
+var request = require("request");
 
 // Create simple echo bot
 login({email: config.fb_email, password: config.fb_password}, function callback (err, api) {
