@@ -4,6 +4,7 @@ Omegle = require('omegle').Omegle;
 
 var fb_api;
 var omegle_convo_list = {};
+var request = require("request");
 
 login({email: config.fb_email, password: config.fb_password}, function callback (err, api) {
 	if(err) return console.error(err);
@@ -19,32 +20,55 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 
 		console.log(participant_ids);
 		console.log(participant_names);
+				// if @mention
+		for (var i = 0; i < participant_names.length; i++) {
+			var name = participant_names[i].toLowerCase();
+			console.log("name: " + name);
 
-		if (participant_names.length > 2) {
-			for (var i = 0; i < participant_names.length; i++) {
-				var name = String(participant_names[i]).toLowerCase();
-				console.log("name: " + name);
-				if (String(message.body).toLowerCase().indexOf("@" + name) >= 0) {
-					console.log("message: " + message.body);
-					var recipient_id = "";
+			if (participant_names.length > 2) {
+				for (var i = 0; i < participant_names.length; i++) {
+					var name = String(participant_names[i]).toLowerCase();
+					console.log("name: " + name);
+					if (String(message.body).toLowerCase().indexOf("@" + name) >= 0) {
+						console.log("message: " + message.body);
+						var recipient_id = "";
 
-					for (var i = 0; i < participant_names.length; i++) {
-						console.log("participant_name: " + participant_names[i]);
-						if (String(participant_names[i]).toLowerCase() == name) {
-							recipient_id = participant_ids[i];
+						for (var i = 0; i < participant_names.length; i++) {
+							console.log("participant_name: " + participant_names[i]);
+							if (String(participant_names[i]).toLowerCase() == name) {
+								recipient_id = participant_ids[i];
+							}
 						}
-					}
 
-					console.log("recipient_id: " + recipient_id);
-					api.sendMessage("You have a new message from " + message.sender_name + " in http://www.messenger.com/t/" + message.thread_id, recipient_id);
+						console.log("recipient_id: " + recipient_id);
+						api.sendMessage("You have a new message from " + message.sender_name + " in http://www.messenger.com/t/" + message.thread_id, recipient_id);
+					}
 				}
+			} else {
+				console.log("received message from: " + message.sender_name);
+				// it's not ready yet....
+				//startOmegle(message.body, message.thread_id);
+				//api.sendMessage(reverse(message.body), message.thread_id);
 			}
-		} else {
-			console.log("received message from: " + message.sender_name);
-			// it's not ready yet....
-			//startOmegle(message.body, message.thread_id);
-			//api.sendMessage(reverse(message.body), message.thread_id);
-		}
+		};
+
+		// cat bombs
+		// USAGE `cat bomb DIGIT`
+		// this sends a cat GIF DIGIT times
+		var res = message.body.match(/cat bomb (\d*)/i);
+		if (res) {
+			for (var i = 0; i < res[1]; i++) {
+				request({
+					url: 'http://edgecats.net/random',
+					json: true
+				}, function (error, response, body) {
+					if (!error && response.statusCode === 200) {
+						console.log(body);
+						api.sendMessage(body, message.thread_id);
+					}
+				});
+			};
+		};
 	});
 });
 
