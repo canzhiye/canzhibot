@@ -55,20 +55,20 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 		// cat bombs
 		// USAGE `cat bomb DIGIT`
 		// this sends a cat GIF DIGIT times
-		var res = message.body.match(/cat bomb (\d*)/i);
-		if (res) {
-			for (var i = 0; i < res[1]; i++) {
-				request({
-					url: 'http://edgecats.net/random',
-					json: true
-				}, function (error, response, body) {
-					if (!error && response.statusCode === 200) {
-						console.log(body);
-						api.sendMessage(body, message.thread_id);
-					}
-				});
-			};
-		};
+		// var res = message.body.match(/cat bomb (\d*)/i);
+		// if (res) {
+		// 	for (var i = 0; i < res[1]; i++) {
+		// 		request({
+		// 			url: 'http://edgecats.net/random',
+		// 			json: true
+		// 		}, function (error, response, body) {
+		// 			if (!error && response.statusCode === 200) {
+		// 				console.log(body);
+		// 				api.sendMessage(body, message.thread_id);
+		// 			}
+		// 		});
+		// 	};
+		// };
 	});
 });
 
