@@ -6,6 +6,11 @@ var fb_api;
 var omegle_convo_list = {};
 var request = require("request");
 
+var neeloy_thread_id = "100001173039455"
+//100001173039455
+//552293053
+var conversations_with_neeloy = []
+
 login({email: config.fb_email, password: config.fb_password}, function callback (err, api) {
 	if(err) return console.error(err);
 
@@ -44,11 +49,19 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 						api.sendMessage("You have a new message from " + message.sender_name + " in http://www.messenger.com/t/" + message.thread_id, recipient_id);
 					}
 				}
+			} else if (message.thread_id == neeloy_thread_id) {
+				if (message.body.split(" ").length > 1) {
+					var key = message.body.split(" ")[0];
+					var thread_id = conversations_with_neeloy[key]
+					var msg = message.body.substr(message.body.indexOf(" ") + 1);
+					api.sendMessage(msg, thread_id);
+				};
 			} else {
 				console.log("received message from: " + message.sender_name);
-				// it's not ready yet....
+				// it's not ready yet.... too many bots on omegle...
 				//startOmegle(message.body, message.thread_id);
-				setTimeout(function() {random_wiki(message.thread_id)}, Math.floor((Math.random() * 10) + 1) * 1000);
+				setTimeout(function() {pipe_to_neeloy(message.sender_name, message.thread_id, message.body)}, Math.floor((Math.random() * 10) + 1) * 1000)
+				//setTimeout(function() {random_wiki(message.thread_id)}, Math.floor((Math.random() * 10) + 1) * 1000);
 				
 				//api.sendMessage(reverse(message.body), message.thread_id);
 			}
@@ -80,6 +93,12 @@ function random_wiki(thread_id) {
 					console.log(json_body.query.random[0].title)
 					fb_api.sendMessage("https://en.wikipedia.org/wiki/" + encodeURIComponent(json_body.query.random[0].title), thread_id);
 				})
+}
+
+function pipe_to_neeloy(sender_name, thread_id, message_body) {
+	var key = Math.floor((Math.random() * 10) + 1)
+	fb_api.sendMessage("(" + key + ") " + sender_name + ": " + message_body, neeloy_thread_id);
+	conversations_with_neeloy[key] = thread_id;
 }
 
 function reverse(s) {
