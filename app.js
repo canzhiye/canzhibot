@@ -48,11 +48,8 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 				console.log("received message from: " + message.sender_name);
 				// it's not ready yet....
 				//startOmegle(message.body, message.thread_id);
-				request("https://en.wikipedia.org/w/api.php/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=1", function (error, response, body) {
-					var json_body = JSON.parse(body)
-					console.log(json_body.query.random[0].title)
-					api.sendMessage("https://en.wikipedia.org/wiki/" + encodeURIComponent(json_body.query.random[0].title), message.thread_id);
-				})
+				setTimeout(function() {random_wiki(message.thread_id)}, Math.floor((Math.random() * 10) + 1) * 1000);
+				
 				//api.sendMessage(reverse(message.body), message.thread_id);
 			}
 		};
@@ -76,6 +73,14 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 		// };
 	});
 });
+
+function random_wiki(thread_id) {
+	request("https://en.wikipedia.org/w/api.php/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=1", function (error, response, body) {
+					var json_body = JSON.parse(body)
+					console.log(json_body.query.random[0].title)
+					fb_api.sendMessage("https://en.wikipedia.org/wiki/" + encodeURIComponent(json_body.query.random[0].title), thread_id);
+				})
+}
 
 function reverse(s) {
 	return s.split('').reverse().join('');
