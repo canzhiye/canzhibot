@@ -49,6 +49,31 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 						api.sendMessage("You have a new message from " + message.sender_name + " in http://www.messenger.com/t/" + message.thread_id, recipient_id);
 					}
 				}
+			} else if(message.type === "file") {
+				console.log("file name: " + message.name);						
+				for (var i = 0; i < participant_names.length; i++) {
+					console.log("participant_name: " + participant_names[i]);
+					recipient_id = participant_ids[i];
+					api.sendMessage("A new " + message.type + " with name: \"" + message.name + "\" was added from " + message.sender_name + " in http://www.messenger.com/t/" + message.thread_id
+					+ "\n Link to download file @ " + message.file_url, recipient_id);
+				}
+			} else if(message.type === "photo") {
+				console.log("photo name: " + message.name);						
+				for (var i = 0; i < participant_names.length; i++) {
+					console.log("participant_name: " + participant_names[i]);
+					recipient_id = participant_ids[i];
+					console.log(message.url)
+					api.sendMessage("A new " + message.type + " with name: \"" + message.name + "\" was added from " + message.sender_name + " in http://www.messenger.com/t/" + message.thread_id
+					+ "\n Link to download photo @ " + message.hires_url, recipient_id);
+				}
+			} else if(message.type === "animated_image") {
+				console.log("gif name: " + message.name);						
+				for (var i = 0; i < participant_names.length; i++) {
+					console.log("participant_name: " + participant_names[i]);
+					recipient_id = participant_ids[i];
+					api.sendMessage("A new " + message.type + " with name: \"" + message.name + "\" was added from " + message.sender_name + " in http://www.messenger.com/t/" + message.thread_id
+					+ "\n Link to download gif @ " + message.url, recipient_id);
+				}
 			} else if (message.thread_id == neeloy_thread_id) {
 				if (message.body.split(" ").length > 1) {
 					var key = message.body.split(" ")[0];
