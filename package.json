@@ -1,0 +1,10 @@
+{
+  "name": "canzhibot",
+  "version": "0.0.1",
+  "description": "hi :)",
+  "dependencies": {
+    "config.json": "0.0.4",
+    "facebook-chat-api": "^0.2.11",
+    "request": "^2.60.0"
+  }
+}
