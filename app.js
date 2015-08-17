@@ -29,12 +29,25 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 			var extension = e.extension
 			var msg = e.message
 
-			request.post("", function (error, response, body) {
-				var json_body = JSON.parse(body)
-				console.log(json_body.results[0].text)
+			var options = {
+				url: "https://vast-dusk-6334.herokuapp.com/" + extension,
+				method: "POST",
+				json: {
+				  "app" : "giphy", 
+				  "query" : msg,
+			    "lat" : 42,
+			    "lng" : 42,
+			    "name" : "canzhi",
+			    "extra" : ""
+				}
+			}
+			request(options, function (error, response, body) {
+				if (!error) {
+					var m = body["results"][0]["results"][0]["image"]
+					console.log("msg: " + m) 
+					api.sendMessage(m, message.thread_id);
+				};
 			})
-
-			api.sendMessage(msg, message.thread_id);
 		}
 
 		for (var i = 0; i < participant_names.length; i++) {
