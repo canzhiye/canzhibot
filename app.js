@@ -43,9 +43,39 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 			}
 			request(options, function (error, response, body) {
 				if (!error) {
-					var m = body.results[0].image
-					console.log("msg: " + m) 
-					api.sendMessage(m, message.thread_id);
+					switch(body.type) {
+						case "image":
+							for (var result in body.results) {
+								var m = body.results[0].image;
+								if (result.title) {
+									m = result.title + "\n" + m;
+								}
+								if (result.subtitle) {
+									m += "\n" + result.subtitle;
+								}
+								if (result.description) {
+									m += "\n" + result.description;
+								}
+								console.log("msg: " + m) 
+								api.sendMessage(m, message.thread_id);
+							}
+							break;
+						case "generic":
+						default:							
+							for (var result in body.results) {
+								var m = body.results[0].title;
+								if (result.subtitle) {
+									m += "\n" + result.subtitle;
+								}
+								if (result.description) {
+									m += "\n" + result.description;
+								}
+								m += "\n" + result.text;
+								console.log("msg: " + m) 
+								api.sendMessage(m, message.thread_id);
+							}
+							break;
+					}
 				};
 			})
 		}
