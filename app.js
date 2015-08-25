@@ -33,7 +33,7 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 				url: "https://vast-dusk-6334.herokuapp.com/" + extension,
 				method: "POST",
 				json: {
-				  "app" : "giphy", 
+				  "app" : extension,
 				  "query" : msg,
 			    "lat" : 42,
 			    "lng" : 42,
@@ -43,39 +43,30 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 			}
 			request(options, function (error, response, body) {
 				if (!error) {
-					var m = body["results"][0]["results"][0]["image"]
+					var m = body.results[0].image
 					console.log("msg: " + m) 
 					api.sendMessage(m, message.thread_id);
 				};
 			})
 		}
 
-		for (var i = 0; i < participant_names.length; i++) {
-			var name = participant_names[i].toLowerCase();
+		if (participant_names.length > 2) {
+			for (var i = 0; i < participant_names.length; i++) {
+				var name = String(participant_names[i]).toLowerCase();
+				// if @mention
+				if (String(message.body).toLowerCase().indexOf("@" + name) >= 0) {
+					console.log("message: " + message.body);
+					var recipient_id = participant_ids[i];
 
-			if (participant_names.length > 2) {
-				for (var i = 0; i < participant_names.length; i++) {
-					var name = String(participant_names[i]).toLowerCase();
-					// if @mention
-					if (String(message.body).toLowerCase().indexOf("@" + name) >= 0) {
-						console.log("message: " + message.body);
-						var recipient_id = "";
-
-						for (var i = 0; i < participant_names.length; i++) {
-							if (String(participant_names[i]).toLowerCase() == name) {
-								recipient_id = participant_ids[i];
-							}
-						}
-
-						console.log("recipient_id: " + recipient_id);
-						api.sendMessage("You have a new message from " + message.sender_name + " in http://www.messenger.com/t/" + message.thread_id, recipient_id);
-					} 
-				}
-			} else {
-				console.log("received message from: " + message.sender_name);				
-				//api.sendMessage(reverse(message.body), message.thread_id);
+					console.log("recipient_id: " + recipient_id);
+					api.sendMessage("You have a new message from " + message.sender_name + " in http://www.messenger.com/t/" + message.thread_id, recipient_id);
+				} 
 			}
-		};
+		} else {
+			console.log("received message from: " + message.sender_name);				
+			//api.sendMessage(reverse(message.body), message.thread_id);
+		}
+
 	});
 });
 
