@@ -14,13 +14,10 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 
 	fb_api = api
 
-	var participant_ids = [];
-	var participant_names = [];
-
 	api.listen(function callback(err, message) {
-		participant_names = message.participant_names;
-		participant_ids = message.participant_ids;
-
+		var participant_ids = message.participant_ids;
+		var participant_names = message.participant_names;
+		
 		console.log(participant_ids);
 		console.log(participant_names);
 
