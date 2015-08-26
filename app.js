@@ -40,6 +40,7 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 			}
 			request(options, (function (error, response, body) {
 				if (!error) {
+					var apiErr = false;
 					switch(body.type) {
 						case "image":
 							for (var index in body.results) {
@@ -58,6 +59,10 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 								api.sendMessage(m, message.thread_id, function(err, obj) {
 									if (err) {
 										console.error(err.errorDescription);
+										if (!apiErr) {
+											api.sendMessage("error: "+err.errorDescription, message.thread_id);
+											apiErr = true;
+										}
 									}
 								});								
 							}
@@ -74,12 +79,17 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 									m += "\n" + result.description;
 								}
 								m += "\n" + result.text;
-								console.log("msg: " + m) 
+								console.log("msg: " + m)
+								setTimeout(
 								api.sendMessage(m, message.thread_id, function(err, obj) {
 									if (err) {
 										console.error("error: "+err.errorDescription);
+										if (!apiErr) {
+											api.sendMessage("error: "+err.errorDescription, message.thread_id);
+											apiErr = true;
+										}
 									}
-								});
+								}), 500 + Math.random() * 1000);
 							}
 							break;
 					}
