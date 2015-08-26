@@ -17,7 +17,7 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 	api.listen(function callback(err, message) {
 		var participant_ids = message.participant_ids;
 		var participant_names = message.participant_names;
-		
+
 		console.log(participant_ids);
 		console.log(participant_names);
 
@@ -38,12 +38,14 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 			    "extra" : ""
 				}
 			}
-			request(options, function (error, response, body) {
+			request(options, (function (error, response, body) {
 				if (!error) {
+					console.log(body);
 					switch(body.type) {
 						case "image":
-							for (var result in body.results) {
-								var m = body.results[0].image;
+							for (var index in body.results) {
+								var result = body.results[index];
+								var m = result.image;
 								if (result.title) {
 									m = result.title + "\n" + m;
 								}
@@ -54,13 +56,18 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 									m += "\n" + result.description;
 								}
 								console.log("msg: " + m) 
-								api.sendMessage(m, message.thread_id);
+								api.sendMessage(m, message.thread_id, function(err, obj) {
+									if (err) {
+										console.error(err.errorDescription);
+									}
+								});								
 							}
 							break;
 						case "generic":
-						default:							
-							for (var result in body.results) {
-								var m = body.results[0].title;
+						default:
+							for (var index in body.results) {
+								var result = body.results[index];
+								var m = result.title;
 								if (result.subtitle) {
 									m += "\n" + result.subtitle;
 								}
@@ -69,14 +76,20 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 								}
 								m += "\n" + result.text;
 								console.log("msg: " + m) 
-								api.sendMessage(m, message.thread_id);
+								api.sendMessage(m, message.thread_id, function(err, obj) {
+									if (err) {
+										console.error("error: "+err.errorDescription);
+									}
+								});
 							}
 							break;
 					}
 				};
-			})
+			}.bind(this)))
 		}
 
+		// these are first names only so there's gunna be some
+		// logic errors with multiple people with the same name...
 		if (participant_names.length > 2) {
 			for (var i = 0; i < participant_names.length; i++) {
 				var name = String(participant_names[i]).toLowerCase();
