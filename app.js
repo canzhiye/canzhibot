@@ -40,7 +40,6 @@ login({email: config.fb_email, password: config.fb_password}, function callback 
 			}
 			request(options, (function (error, response, body) {
 				if (!error) {
-					console.log(body);
 					switch(body.type) {
 						case "image":
 							for (var index in body.results) {
